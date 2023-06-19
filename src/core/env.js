@@ -111,7 +111,7 @@ const defaults = new Map(
     // primary doh upstream
     CF_DNS_RESOLVER_URL: {
       type: "string",
-      default: "https://doh.mullvad.net/dns-query",
+      default: "https://dns.quad9.net/dns-query",
     },
     // secondary doh upstream
     CF_DNS_RESOLVER_URL_2: {
