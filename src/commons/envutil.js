@@ -54,6 +54,12 @@ export function hasHttpCache() {
   return isWorkers();
 }
 
+export function isBun() {
+  if (!envManager) return false;
+
+  return envManager.r() === "bun";
+}
+
 export function isWorkers() {
   if (!envManager) return false;
 
@@ -185,14 +191,14 @@ export function isCleartext() {
 
 // sysctl get net.ipv4.tcp_syn_backlog
 export function tcpBacklog() {
-  if (!envManager) return 100;
+  if (!envManager) return 600; // same as fly.service soft_limit
 
-  return envManager.get("TCP_BACKLOG") || 100;
+  return envManager.get("TCP_BACKLOG") || 600;
 }
 
 // don't forget to update the fly.toml too
 export function maxconns() {
-  if (!envManager) return 1000;
+  if (!envManager) return 1000; // 25% higher than fly.service hard_limit
 
   return envManager.get("MAXCONNS") || 1000;
 }
@@ -302,16 +308,6 @@ export function forceDoh() {
   return envManager.get("NODE_DOH_ONLY") || false;
 }
 
-export function avoidFetch() {
-  if (!envManager) return false;
-
-  // on other runtimes, continue using fetch
-  if (!isNode()) return false;
-
-  // on node, default to avoiding fetch
-  return envManager.get("NODE_AVOID_FETCH") || false;
-}
-
 export function disableDnsCache() {
   // disable when profiling dns resolutions
   return profileDnsResolves();
@@ -333,6 +329,7 @@ export function blockSubdomains() {
 }
 
 // recurisve resolver on Fly
+// see: node/config.js#prep
 export function recursive() {
   return onFly();
 }
